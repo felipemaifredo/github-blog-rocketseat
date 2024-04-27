@@ -1,9 +1,12 @@
 import { Outlet } from "react-router-dom"
+import { GithubDataProvider } from "../contexts/githubContext"
 
 export function DefaultLayout() {
     return (
         <>  
-            <Outlet />
+            <GithubDataProvider>
+                <Outlet />
+            </GithubDataProvider>
         </>
     )
 }

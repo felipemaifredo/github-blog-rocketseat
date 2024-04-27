@@ -1,5 +1,9 @@
+import imgBanner from "../assets/Cover.png"
+
 export const BannerInitial = () => {
     return(
-        <p>Banner</p>
+        <div className="banner-initial">
+            <img src={imgBanner} alt="banner" />
+        </div>
     )
 }

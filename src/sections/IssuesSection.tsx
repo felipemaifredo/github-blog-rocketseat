@@ -19,6 +19,7 @@ export const IssuesSection = () => {
                         <p>{issue.body}</p>
                     </Link>
                 ))}
+                { githubIssuesData.length === 0 && <p className="not-issue">Nenhuma Issue encontrada</p> }
             </div>
         </section>
     )

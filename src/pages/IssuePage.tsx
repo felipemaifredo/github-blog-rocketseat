@@ -54,8 +54,6 @@ export const IssePage = () => {
         }
     }, [id])
 
-    console.log(issueData)
-
     useEffect(() => {
         fetchGithubIssuesData()
     }, [id, fetchGithubIssuesData])

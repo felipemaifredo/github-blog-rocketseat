@@ -228,6 +228,12 @@
 
 /*--------------------*/
 
+.not-issue {
+    color: var(--c-gray-2);
+    width: 100%;
+    text-align: center;
+}
+
 .issue-container {
     width: 100%;
     display: grid;

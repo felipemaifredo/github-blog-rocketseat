@@ -86,6 +86,7 @@ interface GithubDataContextType {
   githubProfileData: GithubProfileData
   githubIssuesData: GithubIssuesData[]
   fetchGithubIssuesData: (searchTerm: string) => Promise<void>
+  clearIssues: () => void
 }
 
 interface GithubDataProviderProps {
@@ -119,6 +120,10 @@ export function GithubDataProvider({ children }: GithubDataProviderProps) {
     }
   }, [])
 
+  const clearIssues = () => {
+    setGithubIssuesData([])
+  }
+
   useEffect(() => {
     fetchGithubProfileData()
   }, [fetchGithubProfileData])
@@ -128,7 +133,7 @@ export function GithubDataProvider({ children }: GithubDataProviderProps) {
   }
 
   return (
-    <GithubDataContext.Provider value={{ githubProfileData, githubIssuesData, fetchGithubIssuesData }}>
+    <GithubDataContext.Provider value={{ githubProfileData, githubIssuesData, fetchGithubIssuesData, clearIssues }}>
       {children}
     </GithubDataContext.Provider>
   )

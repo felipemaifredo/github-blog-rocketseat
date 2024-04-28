@@ -11,6 +11,10 @@ export const SearchSection = () => {
         return context.githubIssuesData
     })
 
+    const clearIssues = useContextSelector(GithubDataContext, (context) => {
+        return context.clearIssues
+    })
+
     const fetchGithubIssuesData = useContextSelector(GithubDataContext, (context) => {
         return context.fetchGithubIssuesData
     })
@@ -18,6 +22,11 @@ export const SearchSection = () => {
     function handleSubmit(e: React.MouseEvent<HTMLFormElement>) {
         e.preventDefault()
         fetchGithubIssuesData(termSearch)
+    }
+
+    function clearFunc(){
+        clearIssues()
+        setTermSearch("")
     }
 
     return (
@@ -38,7 +47,7 @@ export const SearchSection = () => {
                     <div className="btns-box">
                         <button 
                             type="button"
-                            onClick={() => setTermSearch("")}
+                            onClick={clearFunc}
                             > 
                                 <MdClear /> 
                                 Limpar

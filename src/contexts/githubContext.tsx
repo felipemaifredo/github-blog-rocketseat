@@ -2,42 +2,7 @@ import { createContext } from "use-context-selector"
 import { ReactNode, useState, useCallback, useEffect } from "react"
 import { api } from "../lib/axios"
 
-/*const githubInputs = {
-  login: "",
-  id: "",
-  node_id: "",
-  avatar_url: "",
-  gravatar_id: "",
-  url: "",
-  html_url: "",
-  followers_url: "",
-  following_url: "",
-  gists_url: "",
-  starred_url: "",
-  subscriptions_url: "",
-  organizations_url: "",
-  repos_url: "",
-  events_url: "",
-  received_events_url: "",
-  type: "",
-  site_admin: false,
-  name: "",
-  company: null,
-  blog: "",
-  location: "",
-  email: null,
-  hireable: null,
-  bio: "",
-  twitter_username: null,
-  public_repos: "",
-  public_gists: "",
-  followers: "",
-  following: "",
-  created_at: "",
-  updated_at: ""
-}*/
-
-interface GithubData {
+interface GithubProfileData {
   login: string
   id: string
   node_id: string
@@ -72,8 +37,56 @@ interface GithubData {
   updated_at: string
 }
 
+interface GithubIssuesData {
+  url: string;
+  repository_url: string;
+  labels_url: string;
+  comments_url: string;
+  events_url: string;
+  html_url: string;
+  id: number;
+  node_id: string;
+  number: number;
+  title: string;
+  user: GithubProfileData;
+  labels: unknown[]; // You might want to define this more precisely if you know the label structure
+  state: string;
+  locked: boolean;
+  assignee: null | unknown; // Define the type for assignee if known
+  assignees: unknown[]; // Define the type for assignees if known
+  milestone: null | unknown; // Define the type for milestone if known
+  comments: number;
+  created_at: string;
+  updated_at: string;
+  closed_at: string | null;
+  author_association: string;
+  active_lock_reason: string | null;
+  body: string;
+  reactions: Reactions;
+  timeline_url: string;
+  performed_via_github_app: null | unknown; // Define the type for GitHub app if known
+  state_reason: string | null;
+  score: number;
+}
+
+interface Reactions {
+  url: string;
+  total_count: number;
+  '+1': number;
+  '-1': number;
+  laugh: number;
+  hooray: number;
+  confused: number;
+  heart: number;
+  rocket: number;
+  eyes: number;
+}
+
 interface GithubDataContextType {
-  githubData: GithubData
+  githubProfileData: GithubProfileData
+  githubIssuesData: GithubIssuesData[]
+  searchTerm: string
+  setSearchTerm: React.Dispatch<string>
 }
 
 interface GithubDataProviderProps {
@@ -83,29 +96,44 @@ interface GithubDataProviderProps {
 export const GithubDataContext = createContext({} as GithubDataContextType)
 
 export function GithubDataProvider({ children }: GithubDataProviderProps) {
-  const [githubData, setGithubData] = useState<GithubData | null>(null)
+  const [ githubProfileData, setGithubData ] = useState<GithubProfileData | null>(null)
+  const [ githubIssuesData, setGithubIssuesData ] = useState<GithubIssuesData[]>([])
+  const [ searchTerm, setSearchTerm ] = useState("")
+  const repo = "github-blog-rocketseat"
+  const user = "felipemaifredo"
 
-  console.log(githubData)
-
-  const fetchGithubData = useCallback(async () => {
+  const fetchGithubProfileData = useCallback(async () => {
     try {
-      const response = await api.get("users/felipemaifredo")
+      const response = await api.get("/users/felipemaifredo")
       setGithubData(response.data)
     } catch (error) {
       console.error("Erro ao buscar dados do Github:", error)
     }
   }, [])
 
-  useEffect(() => {
-    fetchGithubData()
-  }, [fetchGithubData])
+  const fetchGithubIssuesData = useCallback(async () => {
+    try {
+      const response = await api.get(`/search/issues?q=${searchTerm}%20repo:${user}/${repo}`)
+      setGithubIssuesData(response.data.items)
+    } catch (error) {
+      console.error("Erro ao buscar dados do Github:", error)
+    }
+  }, [searchTerm])
 
-  if (githubData === null) {
+  useEffect(() => {
+    fetchGithubProfileData()
+  }, [fetchGithubProfileData])
+
+  useEffect(() => {
+    fetchGithubIssuesData()
+  }, [fetchGithubIssuesData, searchTerm])
+
+  if (githubProfileData === null) {
     return <div>Carregando...</div>
   }
 
   return (
-    <GithubDataContext.Provider value={{ githubData }}>
+    <GithubDataContext.Provider value={{ githubProfileData, githubIssuesData, searchTerm, setSearchTerm }}>
       {children}
     </GithubDataContext.Provider>
   )

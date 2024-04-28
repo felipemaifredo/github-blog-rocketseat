@@ -1,10 +1,10 @@
 //Imports
-import './App.css'
+import "./App.css"
 import { Route, Routes, HashRouter } from "react-router-dom"
 //Layouts
-import { DefaultLayout } from './layouts/DefaultLayout'
+import { DefaultLayout } from "./layouts/DefaultLayout"
 //Pages
-import { Home } from './pages/Home'
+import { Home } from "./pages/Home"
 
 export function App() {
 

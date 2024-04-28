@@ -11,13 +11,13 @@ export const SearchSection = () => {
         return context.githubIssuesData
     })
 
-    const setSearchTerm = useContextSelector(GithubDataContext, (context) => {
-        return context.setSearchTerm
+    const fetchGithubIssuesData = useContextSelector(GithubDataContext, (context) => {
+        return context.fetchGithubIssuesData
     })
 
     function handleSubmit(e: React.MouseEvent<HTMLFormElement>) {
         e.preventDefault()
-        setSearchTerm(termSearch)
+        fetchGithubIssuesData(termSearch)
     }
 
     return (

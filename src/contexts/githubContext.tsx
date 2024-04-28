@@ -85,8 +85,7 @@ interface Reactions {
 interface GithubDataContextType {
   githubProfileData: GithubProfileData
   githubIssuesData: GithubIssuesData[]
-  searchTerm: string
-  setSearchTerm: React.Dispatch<string>
+  fetchGithubIssuesData: (searchTerm: string) => Promise<void>
 }
 
 interface GithubDataProviderProps {
@@ -98,7 +97,7 @@ export const GithubDataContext = createContext({} as GithubDataContextType)
 export function GithubDataProvider({ children }: GithubDataProviderProps) {
   const [ githubProfileData, setGithubData ] = useState<GithubProfileData | null>(null)
   const [ githubIssuesData, setGithubIssuesData ] = useState<GithubIssuesData[]>([])
-  const [ searchTerm, setSearchTerm ] = useState("")
+  
   const repo = "github-blog-rocketseat"
   const user = "felipemaifredo"
 
@@ -111,29 +110,25 @@ export function GithubDataProvider({ children }: GithubDataProviderProps) {
     }
   }, [])
 
-  const fetchGithubIssuesData = useCallback(async () => {
+  const fetchGithubIssuesData = useCallback(async (searchTerm: string) => {
     try {
       const response = await api.get(`/search/issues?q=${searchTerm}%20repo:${user}/${repo}`)
       setGithubIssuesData(response.data.items)
     } catch (error) {
       console.error("Erro ao buscar dados do Github:", error)
     }
-  }, [searchTerm])
+  }, [])
 
   useEffect(() => {
     fetchGithubProfileData()
   }, [fetchGithubProfileData])
-
-  useEffect(() => {
-    fetchGithubIssuesData()
-  }, [fetchGithubIssuesData, searchTerm])
 
   if (githubProfileData === null) {
     return <div>Carregando...</div>
   }
 
   return (
-    <GithubDataContext.Provider value={{ githubProfileData, githubIssuesData, searchTerm, setSearchTerm }}>
+    <GithubDataContext.Provider value={{ githubProfileData, githubIssuesData, fetchGithubIssuesData }}>
       {children}
     </GithubDataContext.Provider>
   )
